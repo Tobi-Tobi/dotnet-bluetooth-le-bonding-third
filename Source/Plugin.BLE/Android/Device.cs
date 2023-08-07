@@ -13,6 +13,7 @@ using Plugin.BLE.Android.CallbackEventArgs;
 using Trace = Plugin.BLE.Abstractions.Trace;
 using System.Threading;
 using Java.Util;
+using Plugin.BLE.Extensions;
 using Plugin.BLE.Abstractions.Extensions;
 
 namespace Plugin.BLE.Android
@@ -455,5 +456,14 @@ namespace Plugin.BLE.Android
 #endif
         }
 
+        protected override DeviceBondState GetBondState()
+        {
+	        if (NativeDevice == null)
+	        {
+		        Trace.Message($"[Warning]: Can't get bond state of {Name}. NativeDevice is null.");
+		        return DeviceBondState.NotSupported;
+	        }
+	        return NativeDevice.BondState.FromNative();
+        }
     }
 }

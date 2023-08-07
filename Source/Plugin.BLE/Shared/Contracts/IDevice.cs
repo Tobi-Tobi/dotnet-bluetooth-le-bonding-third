@@ -120,5 +120,10 @@ namespace Plugin.BLE.Abstractions.Contracts
         /// True, if device supports IsConnectable else False
         /// </summary>
         bool SupportsIsConnectable { get; }
+        
+        /// <summary>
+        /// Gets the bonding state of a device.
+        /// </summary>
+        DeviceBondState BondState { get; }
     }
 }

@@ -254,5 +254,9 @@ namespace Plugin.BLE.Abstractions
         public abstract bool IsConnectable { get; protected set; }
 
         public abstract bool SupportsIsConnectable { get; }
+        
+        protected abstract DeviceBondState GetBondState();
+        
+        public DeviceBondState BondState => GetBondState();
     }
 }
