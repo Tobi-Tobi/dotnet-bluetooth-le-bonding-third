@@ -28,10 +28,11 @@ namespace Plugin.BLE.BroadcastReceivers
             var extraBondState = (Bond)intent.GetIntExtra(BluetoothDevice.ExtraBondState, (int)Bond.None);
             var bluetoothDevice = (BluetoothDevice)intent.GetParcelableExtra(BluetoothDevice.ExtraDevice);
             
+            var address = bluetoothDevice?.Address;
             var device = new Device(_broadcastAdapter, bluetoothDevice, null);
             var bondState = extraBondState.FromNative();
             
-            BondStateChanged(this, new DeviceBondStateChangedEventArgs { Device = device, State = bondState }); ;
+            BondStateChanged(this, new DeviceBondStateChangedEventArgs { Address = address, Device = device, State = bondState });
         }
     }
 }
