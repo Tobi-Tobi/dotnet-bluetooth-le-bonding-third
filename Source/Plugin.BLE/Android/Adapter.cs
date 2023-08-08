@@ -324,9 +324,9 @@ namespace Plugin.BLE.Android
 
         protected override IReadOnlyList<IDevice> GetBondedDevices()
         {
-            var bondedDevices = _bluetoothAdapter.BondedDevices.Where(d => d.Type == BluetoothDeviceType.Le || d.Type == BluetoothDeviceType.Dual);
+            var bondedDevices = _bluetoothAdapter.BondedDevices?.Where(d => d.Type == BluetoothDeviceType.Le || d.Type == BluetoothDeviceType.Dual);
 
-            return bondedDevices.Select(d => new Device(this, d, null, 0)).Cast<IDevice>().ToList();
+            return bondedDevices?.Select(d => new Device(this, d, null, 0)).Cast<IDevice>().ToList() ?? new List<IDevice>();
         }
 
         public override bool SupportsExtendedAdvertising()
