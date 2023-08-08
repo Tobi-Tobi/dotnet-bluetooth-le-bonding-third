@@ -69,22 +69,40 @@ namespace Plugin.BLE.Android
 
         public override Task BondAsync(IDevice device)
         {
-            if (device == null)
-                throw new ArgumentNullException(nameof(device));
+	        if (device == null)
+	        {
+		        throw new ArgumentNullException(nameof(device));
+	        }
 
-            if (!(device.NativeDevice is BluetoothDevice nativeDevice))
-                throw new ArgumentException("Invalid device type");
+	        if (!(device.NativeDevice is BluetoothDevice nativeDevice))
+	        {
+		        throw new ArgumentException("Invalid device type");
+	        }
 
             if (nativeDevice.BondState == Bond.Bonded)
-                return Task.CompletedTask;
-
-            var tcs = new TaskCompletionSource<bool>();
-
-            _bondingTcsForAddress.Add(nativeDevice.Address!, tcs);
-
-            if (!nativeDevice.CreateBond())
             {
-                _bondingTcsForAddress.Remove(nativeDevice.Address);
+	            return Task.CompletedTask;
+            }
+
+            // Clean the dictionary as there may be duplicate keys.
+            var deviceAddress = nativeDevice.Address ?? string.Empty;
+            if (_bondingTcsForAddress.Count > 0)
+            {
+	            if (_bondingTcsForAddress.TryGetValue(deviceAddress, out _))
+	            {
+		            _bondingTcsForAddress.Remove(deviceAddress);
+	            }
+	            
+	            _bondingTcsForAddress.Clear();
+            }
+            
+            var tcs = new TaskCompletionSource<bool>();
+            _bondingTcsForAddress.Add(deviceAddress, tcs);
+
+            var startsBonding = nativeDevice.CreateBond();
+            if (!startsBonding)
+            {
+                _bondingTcsForAddress.Remove(deviceAddress);
                 throw new Exception("Bonding failed");
             }
 
