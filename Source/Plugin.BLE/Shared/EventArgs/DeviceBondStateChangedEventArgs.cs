@@ -11,6 +11,12 @@ namespace Plugin.BLE.Abstractions.EventArgs
         /// The device.
         /// </summary>
         public IDevice Device { get; set; }
+        
+        /// <summary>
+        /// The device address.
+        /// </summary>
+        public string Address { get; set; }
+        
         /// <summary>
         /// The bond state.
         /// </summary>
