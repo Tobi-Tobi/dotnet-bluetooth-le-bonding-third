@@ -4,16 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Android.App;
-using Android.App;
 using Android.Bluetooth;
 using Android.Bluetooth.LE;
-using Android.Content;
 using Android.Content;
 using Android.OS;
 using Java.Util;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
-using Plugin.BLE.BroadcastReceivers;
 using Plugin.BLE.BroadcastReceivers;
 using Plugin.BLE.Extensions;
 using Object = Java.Lang.Object;
@@ -36,12 +33,12 @@ namespace Plugin.BLE.Android
             _bluetoothAdapter = bluetoothManager.Adapter;
 
             //bonding
-            var bondStatusBroadcastReceiver = new BondStatusBroadcastReceiver(this);
+            var bondStatusBroadcastReceiver = new BondStatusBroadcastReceiver();
             Application.Context.RegisterReceiver(bondStatusBroadcastReceiver,
                 new IntentFilter(BluetoothDevice.ActionBondStateChanged));
 
             //forward events from broadcast receiver
-            bondStatusBroadcastReceiver.BondStateChanged += (s, args) =>
+            bondStatusBroadcastReceiver.BondStateChanged += (_, args) =>
             {
                 HandleDeviceBondStateChanged(args);
 
@@ -75,20 +72,27 @@ namespace Plugin.BLE.Android
 
         public override Task BondAsync(IDevice device)
         {
-            if (device == null)
-                throw new ArgumentNullException(nameof(device));
+	        if (device == null)
+	        {
+		        throw new ArgumentNullException(nameof(device));
+	        }
 
-            if (!(device.NativeDevice is BluetoothDevice nativeDevice))
-                throw new ArgumentException("Invalid device type");
+	        if (!(device.NativeDevice is BluetoothDevice nativeDevice))
+	        {
+		        throw new ArgumentException("Invalid device type");
+	        }
 
-            if (nativeDevice.BondState == Bond.Bonded)
-                return Task.CompletedTask;
+	        if (nativeDevice.BondState == Bond.Bonded)
+	        {
+		        return Task.CompletedTask;
+	        }
 
             var tcs = new TaskCompletionSource<bool>();
 
             _bondingTcsForAddress.Add(nativeDevice.Address!, tcs);
 
-            if (!nativeDevice.CreateBond())
+            var startedBonding = nativeDevice.CreateBond();
+            if (!startedBonding)
             {
                 _bondingTcsForAddress.Remove(nativeDevice.Address);
                 throw new Exception("Bonding failed");

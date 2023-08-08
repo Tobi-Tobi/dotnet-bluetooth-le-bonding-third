@@ -1,5 +1,3 @@
-using Plugin.BLE.Abstractions.Contracts;
-
 namespace Plugin.BLE.Abstractions.EventArgs
 {
     /// <summary>
@@ -7,12 +5,7 @@ namespace Plugin.BLE.Abstractions.EventArgs
     /// </summary>
     public class DeviceBondStateChangedEventArgs : System.EventArgs
     {
-        /// <summary>
-        /// The device.
-        /// </summary>
-        public IDevice Device { get; set; }
-        
-        /// <summary>
+	    /// <summary>
         /// The device address.
         /// </summary>
         public string Address { get; set; }
