@@ -36,7 +36,7 @@ namespace Plugin.BLE.UWP
 
         public override Task BondAsync(IDevice device)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         protected override Task StartScanningForDevicesNativeAsync(ScanFilterOptions scanFilterOptions, bool allowDuplicatesKey, CancellationToken scanCancellationToken)
